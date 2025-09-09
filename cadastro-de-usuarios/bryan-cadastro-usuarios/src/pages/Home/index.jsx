@@ -1,27 +1,31 @@
 import './style.css'
 import Lixeira from '../../assets/lixeira.png'
+import api from '../../services/api'
+import { useEffect, useState } from 'react'
 
 function Home() {
-  const usuarios = [{
-    id: 'eissoae',
-    nome: 'Teste',
-    idade: 30,
-    email: 'teste@email.com'
-  }, {
-    id: 'yowyowyow',
-    nome: 'Doug',
-    idade: 17,
-    email: 'doug@email.com'
-  }]
+  const [usuarios, setUsuarios] = useState([])
+  //let usuarios = []
+
+  async function getUsuarios() {
+    const usuariosDaApi = await api.get('/cadastro')
+    //usuarios = usuariosDaApi.data
+    setUsuarios(usuariosDaApi.data)
+    console.log(usuarios)
+  }
+
+  useEffect(()=>{
+    getUsuarios()
+  }, [])
 
   return (
     <>
       <div className='container'>
         <form>
-          <h1>Olá Mundo</h1>
-          <input name='nome' type="text" />
-          <input name='idade' type="text" />
-          <input name='email' type="text" />
+          <h1>Cadastro de Usuários</h1>
+          <input placeholder='Digite seu nome' name='nome' type="text" />
+          <input placeholder='Digite sua idade' name='idade' type="text" />
+          <input placeholder='Digite seu email' name='email' type="text" />
           <button type='button'>Cadastrar</button>
         </form>
 
