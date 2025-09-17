@@ -1,11 +1,14 @@
 import './style.css'
 import Lixeira from '../../assets/lixeira.png'
 import api from '../../services/api'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 function Home() {
   const [usuarios, setUsuarios] = useState([])
   //let usuarios = []
+  const inputNome = useRef()
+  const inputIdade = useRef()
+  const inputEmail = useRef()
 
   async function getUsuarios() {
     const usuariosDaApi = await api.get('/cadastro')
@@ -14,8 +17,22 @@ function Home() {
     console.log(usuarios)
   }
 
+  async function createUsuarios() {
+    await api.post('/cadastro',{
+        email: inputEmail.current.value,
+        nome: inputNome.current.value,
+        idade: inputIdade.current.value,
+    })
+    getUsuarios()
+  }
+
+  async function deleteUsuarios(id) {
+    await api.delete(`/cadastro/${id}`)
+  }
+
   useEffect(()=>{
     getUsuarios()
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -23,10 +40,10 @@ function Home() {
       <div className='container'>
         <form>
           <h1>Cadastro de Usuários</h1>
-          <input placeholder='Digite seu nome' name='nome' type="text" />
-          <input placeholder='Digite sua idade' name='idade' type="text" />
-          <input placeholder='Digite seu email' name='email' type="text" />
-          <button type='button'>Cadastrar</button>
+          <input placeholder='Digite seu nome' name='nome' type="text" ref={inputNome}/>
+          <input placeholder='Digite sua idade' name='idade' type="text" ref={inputIdade}/>
+          <input placeholder='Digite seu email' name='email' type="text" ref={inputEmail}/>
+          <button type='button' onClick={createUsuarios}>Cadastrar</button>
         </form>
 
         {usuarios.map(usuario => (
@@ -36,7 +53,7 @@ function Home() {
               <p>Idade: {usuario.idade}</p>
               <p>Email: {usuario.email}</p>
             </div>
-          <button>
+          <button onClick={ ()=> deleteUsuarios(usuario.id)}>
             <img src={Lixeira}/>
           </button>
         </div>
