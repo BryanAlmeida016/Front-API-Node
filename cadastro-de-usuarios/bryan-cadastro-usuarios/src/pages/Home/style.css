@@ -103,3 +103,26 @@ form button:hover {
   height: 20px;
   filter: brightness(0) invert(1); /* deixa a imagem branca */
 }
+
+.botoes-card {
+  display: flex;
+  gap: 10px; /* espaço entre os botões */
+}
+
+.botoes-card button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.botoes-card button:hover {
+  transform: scale(1.1);
+}
+
+.botoes-card img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1); /* mantém branco como o da lixeira */
+}

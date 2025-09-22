@@ -1,5 +1,6 @@
 import './style.css'
 import Lixeira from '../../assets/lixeira.png'
+import Lapis from '../../assets/lapis.png'   // novo ícone
 import api from '../../services/api'
 import { useEffect, useState, useRef } from 'react'
 
@@ -84,8 +85,10 @@ function Home() {
               <p>Idade: {usuario.idade}</p>
               <p>Email: {usuario.email}</p>
             </div>
-          <div>
-            <button onClick={()=> preencherFormulario(usuario)}>Editar</button>
+          <div className="botoes-card">
+            <button onClick={()=> preencherFormulario(usuario)}>
+              <img src={Lapis} alt="Editar"/>
+            </button>
             <button onClick={()=> deleteUsuarios(usuario.id)}>
               <img src={Lixeira} alt="Excluir"/>
             </button>
