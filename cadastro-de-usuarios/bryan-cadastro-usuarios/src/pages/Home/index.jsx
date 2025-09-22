@@ -5,16 +5,14 @@ import { useEffect, useState, useRef } from 'react'
 
 function Home() {
   const [usuarios, setUsuarios] = useState([])
-  //let usuarios = []
   const inputNome = useRef()
   const inputIdade = useRef()
   const inputEmail = useRef()
+  const [editando, setEditando] = useState(null) // guarda o id do usuário em edição
 
   async function getUsuarios() {
     const usuariosDaApi = await api.get('/cadastro')
-    //usuarios = usuariosDaApi.data
     setUsuarios(usuariosDaApi.data)
-    console.log(usuarios)
   }
 
   async function createUsuarios() {
@@ -23,16 +21,44 @@ function Home() {
         nome: inputNome.current.value,
         idade: inputIdade.current.value,
     })
+    limparInputs()
     getUsuarios()
   }
 
   async function deleteUsuarios(id) {
     await api.delete(`/cadastro/${id}`)
+    getUsuarios()
+  }
+
+  // função de update
+  async function updateUsuarios() {
+    if(editando){
+      await api.put(`/cadastro/${editando}`, {
+        email: inputEmail.current.value,
+        nome: inputNome.current.value,
+        idade: inputIdade.current.value,
+      })
+      limparInputs()
+      setEditando(null) // sai do modo edição
+      getUsuarios()
+    }
+  }
+
+  function limparInputs(){
+    inputNome.current.value = ""
+    inputIdade.current.value = ""
+    inputEmail.current.value = ""
+  }
+
+  function preencherFormulario(usuario){
+    inputNome.current.value = usuario.nome
+    inputIdade.current.value = usuario.idade
+    inputEmail.current.value = usuario.email
+    setEditando(usuario.id) // entra no modo edição
   }
 
   useEffect(()=>{
     getUsuarios()
-    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -43,7 +69,12 @@ function Home() {
           <input placeholder='Digite seu nome' name='nome' type="text" ref={inputNome}/>
           <input placeholder='Digite sua idade' name='idade' type="text" ref={inputIdade}/>
           <input placeholder='Digite seu email' name='email' type="text" ref={inputEmail}/>
-          <button type='button' onClick={createUsuarios}>Cadastrar</button>
+
+          {editando ? (
+            <button type='button' onClick={updateUsuarios}>Atualizar</button>
+          ) : (
+            <button type='button' onClick={createUsuarios}>Cadastrar</button>
+          )}
         </form>
 
         {usuarios.map(usuario => (
@@ -53,15 +84,18 @@ function Home() {
               <p>Idade: {usuario.idade}</p>
               <p>Email: {usuario.email}</p>
             </div>
-          <button onClick={ ()=> deleteUsuarios(usuario.id)}>
-            <img src={Lixeira}/>
-          </button>
+          <div>
+            <button onClick={()=> preencherFormulario(usuario)}>Editar</button>
+            <button onClick={()=> deleteUsuarios(usuario.id)}>
+              <img src={Lixeira} alt="Excluir"/>
+            </button>
+          </div>
         </div>
         ))}
-
       </div>
     </>
   )
 }
 
 export default Home
+
